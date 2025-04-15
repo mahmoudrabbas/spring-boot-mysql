@@ -4,8 +4,10 @@ import com.store.entity.Author;
 import com.store.service.AuthorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/authors")
@@ -24,9 +26,12 @@ public class AuthorController {
         return ResponseEntity.ok(authorService.findById(id));
     }
 
-    @PostMapping("")
-    public ResponseEntity<?> addOne(@RequestBody @Valid Author entity){
-        return ResponseEntity.ok(authorService.save(entity));
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> addOne(@RequestPart("author") @Valid Author author, @RequestPart("file") MultipartFile file){
+
+        author.setImagePath(authorService.uploadImg(file));
+
+        return ResponseEntity.ok(authorService.save(author));
     }
 
     @PutMapping("")
@@ -42,6 +47,12 @@ public class AuthorController {
     public ResponseEntity<?> deleteOne(@PathVariable Long id){
         authorService.deleteById(id);
         return ResponseEntity.ok(1);
+    }
+
+    @GetMapping("/imgs/{imgName}")
+    public ResponseEntity<byte[]> getImage(@PathVariable String imgName){
+        byte [] img = authorService.getImage(imgName);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(img);
     }
 
 }
