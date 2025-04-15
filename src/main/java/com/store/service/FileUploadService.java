@@ -1,7 +1,9 @@
 package com.store.service;
 
+import com.store.entity.Author;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -12,9 +14,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 
 @Service
 public class FileUploadService {
+
+    @Autowired
+    private AuthorService authorService;
+
 
     private Path storageLocation;
     @Value("${file.upload.base-path}")
@@ -24,12 +31,19 @@ public class FileUploadService {
 
 
 
+    public void updateImagePath(Long id, String pathType, String imageName){
+        if(pathType.contains("authors")){
+            Author author = authorService.findById(id).get();
+            author.setImagePath(pathType+"/"+imageName);
+            authorService.save(author);
+        }
+    }
+
     public String storeFile(File file, Long id, String pathType){
 
         this.storageLocation = Paths.get(basePath+pathType).toAbsolutePath().normalize(); // folder name kamel
 
         try {
-            System.out.println(this.storageLocation);
             Files.createDirectories(this.storageLocation); // create the folder
         }catch (Exception ex){ // if error happen while creating that folder
             log.error("Failed to create Directory: {}",ex.getMessage());
@@ -46,6 +60,9 @@ public class FileUploadService {
             Path targetLocation = this.storageLocation.resolve(fileName);
             InputStream inputStream = new FileInputStream(file);
             Files.copy(inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            updateImagePath(id, pathType, fileName);
+
+            System.out.println(this.storageLocation+fileName);
             return fileName;
 
 
@@ -57,7 +74,7 @@ public class FileUploadService {
 
 
     public File convertMultiPartToFile(final MultipartFile multipartFile){
-        final File file = new File(multipartFile.getOriginalFilename());
+        final File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
 
         try (final FileOutputStream fos = new FileOutputStream(file)){
             fos.write(multipartFile.getBytes());
