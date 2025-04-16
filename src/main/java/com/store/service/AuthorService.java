@@ -6,11 +6,6 @@ import com.store.entity.Author;
 import com.store.repository.AuthorRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +34,8 @@ public class AuthorService extends BaseServiceImpl<Author, Long> {
         return authorRepo.findByEmail(email);
     }
 
+
+    // upload to folder on the system server
     public String uploadImg(MultipartFile file){
         try {
         Path uploadPath = Paths.get(fileStorageLocation);
@@ -47,8 +44,8 @@ public class AuthorService extends BaseServiceImpl<Author, Long> {
         }
 
         String fileName = file.getOriginalFilename();
-        String extention = fileName.substring(fileName.lastIndexOf("."));
-        String imageName = UUID.randomUUID()+extention;
+        String extension = fileName.substring(fileName.lastIndexOf("."));
+        String imageName = UUID.randomUUID()+extension;
 
         Path filePath = uploadPath.resolve(imageName).normalize();
 
@@ -62,6 +59,7 @@ public class AuthorService extends BaseServiceImpl<Author, Long> {
     }
 
 
+    // from the folder on system server
     public void deleteOldImg(String imgPath){
         Path filePath = Paths.get(fileStorageLocation).resolve(imgPath).normalize();
         try {
