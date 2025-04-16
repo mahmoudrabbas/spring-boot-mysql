@@ -6,6 +6,10 @@ import com.store.entity.Author;
 import com.store.repository.AuthorRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,22 +18,22 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @Service
 public class AuthorService extends BaseServiceImpl<Author, Long> {
 
+    @Value("${file.upload.base-path}")
+    private String fileStorageLocation;
+
 
     @Autowired
     private AuthorRepo authorRepo;
 
-    @Value("${upload.base.path}")
-    private String UPLOAD_DIR;
-
     public AuthorService(BaseRepo<Author, Long> baseRepo) {
         super(baseRepo);
     }
-
 
     public Author findByEmail(String email){
         return authorRepo.findByEmail(email);
@@ -37,24 +41,34 @@ public class AuthorService extends BaseServiceImpl<Author, Long> {
 
     public String uploadImg(MultipartFile file){
         try {
-            Files.createDirectories(Paths.get(UPLOAD_DIR));
-            String imgName = UUID.randomUUID()+"_"+file.getOriginalFilename();
-            Path path = Paths.get(UPLOAD_DIR+imgName);
-            Files.write(path, file.getBytes());
-            return path.toString();
-
-        } catch (IOException e) {
-            throw new RuntimeException("Error uploading the image: "+file.getOriginalFilename());
+        Path uploadPath = Paths.get(fileStorageLocation);
+        if(!Files.exists(uploadPath)){
+            Files.createDirectories(uploadPath);
         }
-    }
 
+        String fileName = file.getOriginalFilename();
+        String extention = fileName.substring(fileName.lastIndexOf("."));
+        String imageName = UUID.randomUUID()+extention;
 
-    public byte[] getImage(String imageName) {
-        try {
-            Path imagePath = Paths.get(UPLOAD_DIR+imageName);
-            return Files.readAllBytes(imagePath);
+        Path filePath = uploadPath.resolve(imageName).normalize();
+
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        return imageName;
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw new IllegalStateException(ex.getMessage());
+        }
+
+    }
+
+
+    public void deleteOldImg(String imgPath){
+        Path filePath = Paths.get(fileStorageLocation).resolve(imgPath).normalize();
+        try {
+            Files.delete(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
+
 }
