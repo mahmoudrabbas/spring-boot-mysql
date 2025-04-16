@@ -34,4 +34,6 @@ build/
 
 
 # Spring Boot configuration
-application.properties
+src/main/resources/application.properties
+
+**/application.properties
