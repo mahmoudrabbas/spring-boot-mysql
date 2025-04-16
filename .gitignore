@@ -33,3 +33,5 @@ build/
 .vscode/
 
 
+# Spring Boot configuration
+application.properties
