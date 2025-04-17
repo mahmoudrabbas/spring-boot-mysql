@@ -3,6 +3,7 @@ package com.store.controller;
 import com.store.entity.Author;
 import com.store.service.AuthorService;
 import com.store.service.CloudinaryService;
+import com.store.service.S3Service;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,9 @@ public class AuthorController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
+    @Autowired
+    private S3Service s3Service;
+
     @Value("${file.upload.base-path}")
     private String imgDir;
 
@@ -44,8 +48,7 @@ public class AuthorController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addOne(@RequestPart("author") @Valid Author author, @RequestPart("file") MultipartFile file){
         try {
-            author.setImagePath(cloudinaryService.uploadFile(file.getBytes(), file.getOriginalFilename()));
-            author.setPublicId(file.getOriginalFilename());
+            author.setImagePath(s3Service.uploadFileToS3(file));
             return ResponseEntity.ok(authorService.save(author));
 
         }catch (IOException ex){
@@ -59,11 +62,13 @@ public class AuthorController {
             Author author = authorService.findById(entity.getId()).orElseThrow();
             author.setFullName(entity.getFullName());
             author.setEmail(entity.getEmail());
+            s3Service.deleteFileFromS3(author.getImagePath());
+            author.setImagePath(s3Service.uploadFileToS3(file));
 //      authorService.deleteOldImg(author.getImagePath());
-            cloudinaryService.deleteFile(author.getPublicId());
+//            cloudinaryService.deleteFile(author.getPublicId());
 //            author.setImagePath(authorService.uploadImg(file));
-            author.setImagePath(cloudinaryService.uploadFile(file.getBytes(), file.getOriginalFilename()));
-            author.setPublicId(file.getOriginalFilename());
+//            author.setImagePath(cloudinaryService.uploadFile(file.getBytes(), file.getOriginalFilename()));
+//            author.setPublicId(file.getOriginalFilename());
             return ResponseEntity.ok(authorService.save(author));
         } catch (IOException ex) {
             return ResponseEntity.badRequest().body("Error updating the image");
@@ -72,15 +77,13 @@ public class AuthorController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteOne(@PathVariable Long id){
-        Author author = authorService.findById(id).get();
+        Author author = authorService.findById(id).orElseThrow();
         authorService.deleteById(id);
-        try {
-            String done = cloudinaryService.deleteFile(author.getPublicId());
-            return ResponseEntity.ok().body("Deleted");
-        } catch (IOException e) {
-            return ResponseEntity.status(500).body("Error deleting the image");
+        if(!author.getImagePath().isEmpty()){
+            s3Service.deleteFileFromS3(author.getImagePath());
         }
-//        authorService.deleteOldImg(author.getImagePath());
+        return ResponseEntity.ok().body("Deleted");
+        //        authorService.deleteOldImg(author.getImagePath());
 //        return ResponseEntity.ok(1);
     }
 

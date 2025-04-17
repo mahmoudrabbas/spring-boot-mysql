@@ -15,8 +15,8 @@ public class Author extends BaseEntity<Long> {
     @Column(name = "image_path")
     private String imagePath;
 
-    @Column(name = "img_public_id")
-    private String publicId;
+//    @Column(name = "img_key")
+//    private String publicId;
 
 
     @NotNull(message = "Email Is Required")
@@ -57,11 +57,11 @@ public class Author extends BaseEntity<Long> {
         this.imagePath = imagePath;
     }
 
-    public String getPublicId() {
-        return publicId;
-    }
-
-    public void setPublicId(String publicId) {
-        this.publicId = publicId;
-    }
+//    public String getPublicId() {
+//        return publicId;
+//    }
+//
+//    public void setPublicId(String publicId) {
+//        this.publicId = publicId;
+//    }
 }
