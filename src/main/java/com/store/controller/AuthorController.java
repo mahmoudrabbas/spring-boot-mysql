@@ -4,6 +4,9 @@ import com.store.entity.Author;
 import com.store.service.AuthorService;
 import com.store.service.CloudinaryService;
 import com.store.service.S3Service;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,16 +38,25 @@ public class AuthorController {
     @Value("${file.upload.base-path}")
     private String imgDir;
 
+    @Operation(summary = "get all authors", responses = {
+            @ApiResponse(responseCode = "200", description = "return all users"),
+    })
     @GetMapping("")
     public ResponseEntity<?> getAll(){
         return ResponseEntity.ok(authorService.findAll());
     }
+    @Operation(summary = "get author by id", responses = {
+            @ApiResponse(responseCode = "200", description = "Author found"),
+            @ApiResponse(responseCode = "404", description = "Author Not found")
 
+    })
     @GetMapping("{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id){
+    public ResponseEntity<?> getById(@Parameter(name = "author id", example = "5") @PathVariable Long id){
         return ResponseEntity.ok(authorService.findById(id));
     }
 
+
+    @Operation(summary = "add new author by sending the author data and image")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addOne(@RequestPart("author") @Valid Author author, @RequestPart("file") MultipartFile file){
         try {
@@ -56,6 +68,7 @@ public class AuthorController {
         }
     }
 
+    @Operation(summary = "update author by giving the author data and image")
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateOne(@RequestPart("author") @Valid Author entity, @RequestPart("file") MultipartFile file) {
         try {
@@ -75,8 +88,9 @@ public class AuthorController {
         }
     }
 
+    @Operation(summary = "delete author by id")
     @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteOne(@PathVariable Long id){
+    public ResponseEntity<?> deleteOne(@Parameter(example = "20") @PathVariable Long id){
         Author author = authorService.findById(id).orElseThrow();
         authorService.deleteById(id);
         if(!author.getImagePath().isEmpty()){
@@ -87,6 +101,8 @@ public class AuthorController {
 //        return ResponseEntity.ok(1);
     }
 
+
+    @Operation(summary = "adding images to 'Cloudinary' cdn author by id")
     @PostMapping("/to-cdn")
     public ResponseEntity<?> uploadImgToCDN(@RequestParam MultipartFile file){
         try {
@@ -97,8 +113,11 @@ public class AuthorController {
         }
     }
 
+
+
+    @Operation(summary = "get the image by the author id")
     @GetMapping("/imgs/{id}")
-    public ResponseEntity<Resource> getImage(@PathVariable Long id)  {
+    public ResponseEntity<Resource> getImage(@Parameter(name = "author id", example = "5") @PathVariable Long id)  {
 
         try {
             String fileName = authorService.findById(id).get().getImagePath();
