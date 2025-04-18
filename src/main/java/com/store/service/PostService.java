@@ -15,6 +15,7 @@ public class PostService {
     RestTemplate restTemplate = new RestTemplate();
 
     public List<PostDTO> getAllPosts(){
+        System.out.println("it must work before the @After advice in detailsAspect");
         ResponseEntity<List> result = restTemplate.getForEntity(BASIC_URL, List.class);
         return result.getBody();
     }
