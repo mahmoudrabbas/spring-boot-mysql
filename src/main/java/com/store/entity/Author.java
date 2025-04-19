@@ -6,8 +6,10 @@ import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serializable;
+
 @Entity
-public class Author extends BaseEntity<Long> {
+public class Author  extends BaseEntity<Long> {
     @NotNull(message = "Full Name Is Required")
     @Column(name = "full_name")
     private String fullName;

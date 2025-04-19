@@ -50,6 +50,8 @@ public class AuthorController {
             @ApiResponse(responseCode = "404", description = "Author Not found")
 
     })
+
+
     @GetMapping("{id}")
     public ResponseEntity<?> getById(@Parameter(name = "author id", example = "5") @PathVariable Long id){
         return ResponseEntity.ok(authorService.findById(id));

@@ -15,24 +15,14 @@ public abstract class BaseServiceImpl<T extends BaseEntity<ID>, ID extends Seria
         this.baseRepo = baseRepo;
     }
 
-    @Override
-    public T save(T entity) {
-        return baseRepo.save(entity);
-    }
+    public abstract T save(T entity);
 
-    @Override
-    public Optional<T> findById(ID id) {
-        return baseRepo.findById(id);
-    }
+    public abstract Optional<T> findById(ID id);
 
-    @Override
-    public void deleteById(ID id) {
-        baseRepo.deleteById(id);
-    }
+    public abstract void deleteById(ID id);
 
-    @Override
-    public List<T> findAll() {
-        return baseRepo.findAll();
-    }
+    public abstract List<T> findAll();
+
+    public abstract T update(T entity);
 
 }
