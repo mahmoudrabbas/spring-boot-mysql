@@ -5,10 +5,18 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Author  extends BaseEntity<Long> {
     @NotNull(message = "Full Name Is Required")
     @Column(name = "full_name")
@@ -17,53 +25,11 @@ public class Author  extends BaseEntity<Long> {
     @Column(name = "image_path")
     private String imagePath;
 
-//    @Column(name = "img_key")
-//    private String publicId;
-
 
     @NotNull(message = "Email Is Required")
     @Email(message = "Email Is Not Valid")
     @Column(name = "email", unique = true)
     private String email;
 
-    public Author() {
-    }
 
-    public Author(String fullName, String email) {
-        this.fullName = fullName;
-        this.email = email;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getImagePath() {
-
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
-
-//    public String getPublicId() {
-//        return publicId;
-//    }
-//
-//    public void setPublicId(String publicId) {
-//        this.publicId = publicId;
-//    }
 }

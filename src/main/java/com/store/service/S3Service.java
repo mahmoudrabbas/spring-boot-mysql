@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,15 +15,13 @@ import java.net.URI;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class S3Service {
     @Value("${aws.s3.bucket}")
     private String bucket;
 
     private final AmazonS3 amazonS3;
 
-    public S3Service(AmazonS3 amazonS3) {
-        this.amazonS3 = amazonS3;
-    }
 
     public String uploadFileToS3(MultipartFile file) throws IOException {
         String key = UUID.randomUUID().toString()+"_"+file.getOriginalFilename();

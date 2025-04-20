@@ -4,6 +4,7 @@ import com.store.base.repo.BaseRepo;
 import com.store.base.service.BaseServiceImpl;
 import com.store.entity.Author;
 import com.store.repository.AuthorRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -29,11 +30,11 @@ public class AuthorService extends BaseServiceImpl<Author, Long> {
     private String fileStorageLocation;
 
 
-    @Autowired
-    private AuthorRepo authorRepo;
+    private final AuthorRepo authorRepo;
 
-    public AuthorService(BaseRepo<Author, Long> baseRepo) {
+    public AuthorService(BaseRepo<Author, Long> baseRepo, AuthorRepo authorRepo) {
         super(baseRepo);
+        this.authorRepo = authorRepo;
     }
 
     @CacheEvict(value = "authorsList", allEntries = true)

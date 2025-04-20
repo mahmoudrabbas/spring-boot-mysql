@@ -8,8 +8,13 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
+
 public abstract class BaseServiceImpl<T extends BaseEntity<ID>, ID extends Serializable> implements BaseService<T,ID> {
     private BaseRepo<T, ID> baseRepo;
+
+    public BaseServiceImpl(){
+
+    }
 
     public BaseServiceImpl(BaseRepo<T, ID> baseRepo) {
         this.baseRepo = baseRepo;
