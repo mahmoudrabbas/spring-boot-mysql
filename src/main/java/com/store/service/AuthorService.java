@@ -4,7 +4,6 @@ import com.store.base.repo.BaseRepo;
 import com.store.base.service.BaseServiceImpl;
 import com.store.entity.Author;
 import com.store.repository.AuthorRepo;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;

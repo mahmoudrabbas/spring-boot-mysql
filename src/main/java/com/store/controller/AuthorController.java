@@ -104,16 +104,16 @@ public class AuthorController {
     }
 
 
-    @Operation(summary = "adding images to 'Cloudinary' cdn author by id")
-    @PostMapping("/to-cdn")
-    public ResponseEntity<?> uploadImgToCDN(@RequestParam MultipartFile file){
-        try {
-            String url = cloudinaryService.uploadFile(file.getBytes(), file.getOriginalFilename());
-            return ResponseEntity.ok().body(url);
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
+//    @Operation(summary = "adding images to 'Cloudinary' cdn author by id")
+//    @PostMapping("/to-cdn")
+//    public ResponseEntity<?> uploadImgToCDN(@RequestParam MultipartFile file){
+//        try {
+//            String url = cloudinaryService.uploadFile(file.getBytes(), file.getOriginalFilename());
+//            return ResponseEntity.ok().body(url);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e.getMessage());
+//        }
+//    }
 
 
 
