@@ -84,8 +84,8 @@ public class AuthorService extends BaseServiceImpl<Author, Long> {
     }
 
 
-    @Cacheable(value = "authorsEmails", key = "#email")
-    public Author findByEmail(String email){
+//    @Cacheable(value = "authorsEmails", key = "#email")
+    public Optional<Author> findByEmail(String email){
         return authorRepo.findByEmail(email);
     }
 

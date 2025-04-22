@@ -1,6 +1,7 @@
 package com.store.entity;
 
 
+
 public class AuthorDTO {
     private String fullName;
     private String imagePath;

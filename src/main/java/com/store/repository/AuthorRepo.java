@@ -4,7 +4,9 @@ import com.store.base.repo.BaseRepo;
 import com.store.entity.Author;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface AuthorRepo extends BaseRepo<Author, Long> {
-    public Author findByEmail(String email);
+    Optional<Author> findByEmail(String email);
 }

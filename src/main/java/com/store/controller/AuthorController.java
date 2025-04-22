@@ -30,10 +30,8 @@ public class AuthorController {
     private AuthorService authorService;
 
     @Autowired
-    private CloudinaryService cloudinaryService;
-
-    @Autowired
     private S3Service s3Service;
+
 
     @Value("${file.upload.base-path}")
     private String imgDir;
@@ -43,15 +41,16 @@ public class AuthorController {
     })
     @GetMapping("")
     public ResponseEntity<?> getAll(){
+//    	System.out.println("ssssssssssssssss");
         return ResponseEntity.ok(authorService.findAll());
     }
+    
+    
     @Operation(summary = "get author by id", responses = {
             @ApiResponse(responseCode = "200", description = "Author found"),
             @ApiResponse(responseCode = "404", description = "Author Not found")
 
     })
-
-
     @GetMapping("{id}")
     public ResponseEntity<?> getById(@Parameter(name = "author id", example = "5") @PathVariable Long id){
         return ResponseEntity.ok(authorService.findById(id));
@@ -59,8 +58,15 @@ public class AuthorController {
 
 
     @Operation(summary = "add new author by sending the author data and image")
+    @PostMapping("/add")
+    public ResponseEntity<?> addOne(@RequestBody @Valid Author author){
+        Author author1 = authorService.save(author);
+        return ResponseEntity.ok(author1);
+    }
+
+    @Operation(summary = "add new author by sending the author data and image")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addOne(@RequestPart("author") @Valid Author author, @RequestPart("file") MultipartFile file){
+    public ResponseEntity<?> addOneWithPicture(@RequestPart("author") @Valid Author author, @RequestPart("file") MultipartFile file){
         try {
             author.setImagePath(s3Service.uploadFileToS3(file));
             return ResponseEntity.ok(authorService.save(author));
@@ -68,6 +74,7 @@ public class AuthorController {
         }catch (IOException ex){
             return ResponseEntity.badRequest().build();
         }
+
     }
 
     @Operation(summary = "update author by giving the author data and image")
@@ -88,6 +95,7 @@ public class AuthorController {
         } catch (IOException ex) {
             return ResponseEntity.badRequest().body("Error updating the image");
         }
+
     }
 
     @Operation(summary = "delete author by id")
@@ -99,8 +107,6 @@ public class AuthorController {
             s3Service.deleteFileFromS3(author.getImagePath());
         }
         return ResponseEntity.ok().body("Deleted");
-        //        authorService.deleteOldImg(author.getImagePath());
-//        return ResponseEntity.ok(1);
     }
 
 
@@ -140,6 +146,7 @@ public class AuthorController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
 //    @DeleteMapping("/delete-cdn/{public_id}")
@@ -152,4 +159,9 @@ public class AuthorController {
 //        }
 //    }
 
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<?> getByEmail(@PathVariable String email){
+        return ResponseEntity.ok().body(authorService.findByEmail(email).get());
+    }
 }

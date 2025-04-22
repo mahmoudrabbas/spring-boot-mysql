@@ -23,36 +23,33 @@ public class Author  extends BaseEntity<Long> {
     @Column(name = "email", unique = true)
     private String email;
 
-    public Author() {
-    }
 
-    public Author(String fullName, String imagePath, String email) {
+    public Author(String fullName, String email) {
         this.fullName = fullName;
-        this.imagePath = imagePath;
         this.email = email;
     }
 
-    public String getFullName() {
-        return fullName;
-    }
+   public String getFullName() {
+       return fullName;
+   }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
+   public void setFullName(String fullName) {
+       this.fullName = fullName;
+   }
 
-    public String getImagePath() {
-        return imagePath;
-    }
+   public String getImagePath() {
+       return imagePath;
+   }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
+   public void setImagePath(String imagePath) {
+       this.imagePath = imagePath;
+   }
 
-    public String getEmail() {
-        return email;
-    }
+   public String getEmail() {
+       return email;
+   }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+   public void setEmail(String email) {
+       this.email = email;
+   }
 }
